@@ -1,6 +1,8 @@
 import time
 from openai import OpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_MODEL
+import httpx
+import warnings
 
 class LLMClient:
     def __init__(self) -> None:
@@ -8,7 +10,7 @@ class LLMClient:
             raise ValueError("OPENAI_API_KEY is not set")
         if not OPENAI_MODEL:
             raise ValueError("OPENAI_MODEL is not set")
-        self.client = OpenAI(api_key=OPENAI_API_KEY)
+        self.client = OpenAI(api_key=OPENAI_API_KEY, http_client=httpx.Client(verify=False))
         self.model = OPENAI_MODEL
 
     def chat(self, messages: str | list[dict]) -> tuple[str, dict]:
