@@ -5,6 +5,7 @@ from app.core import llm_client
 from app.core.llm_client import LLMClient
 from app.core.tool_client import ToolClient
 import structlog
+from app.core.guardrails import is_unsafe_user_input
 
 router = APIRouter()
 tool_client = ToolClient()
@@ -35,6 +36,11 @@ async def chat(req: ChatRequest, request: Request):
     if llm is None:
         raise HTTPException(status_code=500, detail="LLM client not configured. Check OPENAI_API_KEY in .env")
 
+    if is_unsafe_user_input(req.message):
+        return ChatResponse(reply="I'm sorry, I can't help with that.", request_id=request_id, meta={
+            "blocked": True,
+            "reason": "unsafe_input",
+        })
     try:
         reply, meta = await llm.chat_with_tools(req.message)
 

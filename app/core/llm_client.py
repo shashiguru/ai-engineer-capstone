@@ -5,6 +5,11 @@ from typing import Any
 from openai import AsyncOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_MODEL
 from app.core.tool_client import ToolClient
+from pydantic import ValidationError
+from app.core.tool_schemas import AddArgs, MultiplyArgs
+
+ALLOWED_TOOLS = {"add","multiply"}
+MAX_TOOL_CALLS_PER_REQUEST = 5
 
 
 # Define the tools your LLM is allowed to call
@@ -58,6 +63,7 @@ class LLMClient:
         """
         overall_start = time.perf_counter()
         tools_used: list[dict[str, Any]] = []
+        tool_calls_count = 0
 
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": "You are a helpful assistant. Use tools for exact math."},
@@ -75,6 +81,7 @@ class LLMClient:
 
             choice = resp.choices[0]
             msg = choice.message
+
 
             # If no tool calls, we're done
             if not msg.tool_calls:
@@ -106,6 +113,24 @@ class LLMClient:
             for tc in msg.tool_calls:
                 tool_name = tc.function.name
                 tool_args = json.loads(tc.function.arguments or "{}")
+                if tool_name not in ALLOWED_TOOLS:
+                    raise ValueError(f"Tool {tool_name} is not allowed")
+                
+                tool_calls_count += 1
+                if tool_calls_count > MAX_TOOL_CALLS_PER_REQUEST:
+                    raise ValueError(f"Tool calls limit of {MAX_TOOL_CALLS_PER_REQUEST} reached")
+
+                try:
+                    if tool_name == "add":
+                        validated = AddArgs.model_validate(tool_args)
+                        tool_args = validated.model_dump()
+                    elif tool_name == "multiply":
+                        validated = MultiplyArgs.model_validate(tool_args)
+                        tool_args = validated.model_dump()
+                    else:
+                        raise ValueError(f"Tool {tool_name} is not allowed")
+                except ValidationError as e:
+                    raise ValueError(f"Invalid tool arguments {tool_name}: {e}")
 
                 tool_start = time.perf_counter()
                 tool_output = await self.tool_client.call_tool(tool_name, tool_args)
