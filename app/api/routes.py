@@ -6,10 +6,12 @@ from app.core.llm_client import LLMClient
 from app.core.tool_client import ToolClient
 import structlog
 from app.core.guardrails import is_unsafe_user_input
+from app.core.rate_limit import RateLimiter
 
 router = APIRouter()
 tool_client = ToolClient()
 log = structlog.get_logger()
+limiter = RateLimiter(max_requests=10, window_seconds=60)
 
 llm = None
 try:
@@ -33,6 +35,14 @@ async def health() -> dict:
 async def chat(req: ChatRequest, request: Request):
     request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
 
+    client_key = request.client.host if request.client else "unknown"
+    if not limiter.allow(client_key):
+        return ChatResponse(
+            reply="Too many requests. Please slow down.",
+            request_id=request_id,
+            meta={"blocked": True, "reason": "rate_limited"},
+        )
+
     if llm is None:
         raise HTTPException(status_code=500, detail="LLM client not configured. Check OPENAI_API_KEY in .env")
 
@@ -42,7 +52,7 @@ async def chat(req: ChatRequest, request: Request):
             "reason": "unsafe_input",
         })
     try:
-        reply, meta = await llm.chat_with_tools(req.message)
+        reply, meta = await llm.chat_with_tools(req.message, request_id)
 
         log.info("chat_success", request_id=request_id, meta=meta)
         return ChatResponse(reply=reply, request_id=request_id, meta=meta)

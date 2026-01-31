@@ -1,12 +1,15 @@
 import json
 import time
 from typing import Any
+import uuid
 
 from openai import AsyncOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_MODEL
 from app.core.tool_client import ToolClient
 from pydantic import ValidationError
 from app.core.tool_schemas import AddArgs, MultiplyArgs
+import hashlib
+from app.core.tool_log_repo import insert_tool_log
 
 ALLOWED_TOOLS = {"add","multiply"}
 MAX_TOOL_CALLS_PER_REQUEST = 5
@@ -46,6 +49,9 @@ TOOLS = [
     },
 ]
 
+def hash_args(args: dict) -> str:
+    raw = json.dumps(args, sort_keys=True).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
 
 class LLMClient:
     def __init__(self) -> None:
@@ -54,7 +60,7 @@ class LLMClient:
         self.client = AsyncOpenAI(api_key=OPENAI_API_KEY)
         self.tool_client = ToolClient()
 
-    async def chat_with_tools(self, user_message: str) -> tuple[str, dict]:
+    async def chat_with_tools(self, user_message: str, request_id: str) -> tuple[str, dict]:
         """
         LLM decides if tool call is needed. If yes:
         - execute tool via MCP
@@ -133,8 +139,44 @@ class LLMClient:
                     raise ValueError(f"Invalid tool arguments {tool_name}: {e}")
 
                 tool_start = time.perf_counter()
-                tool_output = await self.tool_client.call_tool(tool_name, tool_args)
-                tool_latency_ms = (time.perf_counter() - tool_start) * 1000.0
+                args_hash = hash_args(tool_args)
+                tool_latency_ms = None
+
+                try:
+                    tool_output = await self.tool_client.call_tool(tool_name, tool_args)
+                    tool_latency_ms = (time.perf_counter() - tool_start) * 1000.0
+
+                    # Tool output validation for math tools:
+                    # Should be numeric string
+                    if tool_name in {"add", "multiply"}:
+                        stripped = tool_output.strip()
+                        if not stripped.lstrip("-").isdigit():
+                            raise ValueError(f"Tool returned non-numeric output: {tool_output}")
+
+                    insert_tool_log(
+                        request_id=request_id,
+                        tool_name=tool_name,
+                        args_hash=args_hash,
+                        args=tool_args,
+                        tool_latency_ms=round(tool_latency_ms, 2),
+                        tool_output_preview=tool_output,
+                        success=True,
+                    )
+
+                except Exception as e:
+                    if tool_latency_ms is None:
+                        tool_latency_ms = (time.perf_counter() - tool_start) * 1000.0
+                    insert_tool_log(
+                        request_id=request_id,
+                        tool_name=tool_name,
+                        args_hash=args_hash,
+                        args=tool_args,
+                        tool_latency_ms=round(tool_latency_ms, 2),
+                        tool_output_preview="",
+                        success=False,
+                        error=str(e),
+                    )
+                    raise
 
                 tools_used.append(
                     {
