@@ -11,7 +11,7 @@ from app.core.rate_limit import RateLimiter
 router = APIRouter()
 tool_client = ToolClient()
 log = structlog.get_logger()
-limiter = RateLimiter(max_requests=10, window_seconds=60)
+limiter = RateLimiter(max_requests=2, window_seconds=60)
 
 llm = None
 try:

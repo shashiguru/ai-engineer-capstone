@@ -1,0 +1,14 @@
+[
+  {
+    "chunk_id": "oncall.md::chunk0",
+    "doc_id": "oncall.md",
+    "source": "docs\\oncall.md",
+    "text": "SOP: On-call rotation is weekly. Escalations go to the team lead."
+  },
+  {
+    "chunk_id": "product.md::chunk0",
+    "doc_id": "product.md",
+    "source": "docs\\product.md",
+    "text": "Product: This system answers questions using internal documents with citations."
+  }
+]

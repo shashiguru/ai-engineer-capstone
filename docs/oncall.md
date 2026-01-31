@@ -1,0 +1,1 @@
+SOP: On-call rotation is weekly. Escalations go to the team lead.
