@@ -10,6 +10,7 @@ from app.core.guardrails import is_unsafe_user_input
 from app.core.rate_limit import RateLimiter
 from app.core.llm_client import LLMClient
 from app.core.tool_client import ToolClient
+from app.core.config import TOP_K, MIN_SCORE
 
 log = structlog.get_logger()
 
@@ -68,12 +69,12 @@ async def route_node(state: QAState) -> QAState:
 
     # 🔥 Retrieval-based routing (best)
     try:
-        candidates = retrieve(msg, k=3)
+        candidates = retrieve(msg, k=TOP_K)
         top_score = candidates[0]["score"] if candidates else 0.0
     except Exception:
         top_score = 0.0
 
-    if top_score >= 0.25:
+    if top_score >= MIN_SCORE:
         return {"route": "rag", "meta": {"route": "rag", "top_score": top_score}}
 
     # Heuristic routing (cheap + predictable).
@@ -104,10 +105,9 @@ async def rag_node(state: QAState) -> QAState:
     q = state["user_message"]
 
     # get candidates
-    results = retrieve(q, k=6)
+    results = retrieve(q, k=TOP_K)
 
     # ✅ NEW: filter low quality hits
-    MIN_SCORE = 0.25
     strong = [r for r in results if r["score"] >= MIN_SCORE]
 
     citations = [

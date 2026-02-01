@@ -1,4 +1,5 @@
 from typing import List, Dict
+from app.rag.resume_chunker import chunk_resume
 
 def chunk_text(text: str, chunk_size: int = 900, overlap: int = 150) -> List[str]:
     chunks = []
@@ -24,7 +25,11 @@ def chunk_documents(docs: List[Dict], chunk_size: int = 900, overlap: int = 150)
     """
     out = []
     for d in docs:
-        parts = chunk_text(d["text"], chunk_size=chunk_size, overlap=overlap)
+        doc_id = d["id"].lower()
+        if "resume" in doc_id or "cv" in doc_id:
+            parts = chunk_resume(d["text"], max_chars=chunk_size)
+        else:
+            parts = chunk_text(d["text"], chunk_size=chunk_size, overlap=overlap)
         for i, c in enumerate(parts):
             out.append(
                 {
