@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List, Dict
+from app.rag.pdf_loader import load_pdf
 
 def load_documents(docs_dir: str = "docs") -> List[Dict]:
     """
@@ -21,4 +22,8 @@ def load_documents(docs_dir: str = "docs") -> List[Dict]:
                         "text": text,
                     }
                 )
+        elif file.is_file() and file.suffix.lower() == ".pdf":
+            d = load_pdf(str(file))
+            if d["text"]:
+                docs.append(d)
     return docs

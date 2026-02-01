@@ -66,10 +66,24 @@ async def route_node(state: QAState) -> QAState:
 
     m = msg.lower()
 
+    # 🔥 Retrieval-based routing (best)
+    try:
+        candidates = retrieve(msg, k=3)
+        top_score = candidates[0]["score"] if candidates else 0.0
+    except Exception:
+        top_score = 0.0
+
+    if top_score >= 0.25:
+        return {"route": "rag", "meta": {"route": "rag", "top_score": top_score}}
+
     # Heuristic routing (cheap + predictable).
     # Later we can replace this with a tiny LLM classifier node.
     is_math = any(x in m for x in ["*", "multiply", "add", "sum", "plus"])
-    is_knowledge = any(x in m for x in ["policy", "sop", "document", "on-call", "runbook", "guide"])
+    is_knowledge = any(x in m for x in [
+        "policy", "sop", "document", "docs", "on-call", "runbook", "guide",
+        "resume", "cv", "profile", "experience", "skills", "projects", "education",
+        "summary", "strengths", "achievements"
+    ])
 
     if is_math and is_knowledge:
         route: Route = "hybrid"
@@ -88,17 +102,26 @@ async def route_node(state: QAState) -> QAState:
 # -------------------------
 async def rag_node(state: QAState) -> QAState:
     q = state["user_message"]
-    topk = 4
-    results = retrieve(q, k=topk)
+
+    # get candidates
+    results = retrieve(q, k=6)
+
+    # ✅ NEW: filter low quality hits
+    MIN_SCORE = 0.25
+    strong = [r for r in results if r["score"] >= MIN_SCORE]
 
     citations = [
         {"rank": r["rank"], "source": r["source"], "chunk_id": r["chunk_id"], "score": r["score"]}
-        for r in results
+        for r in strong
     ]
 
-    return {"retrieved": results, "citations": citations}
+    return {
+        "retrieved": strong,
+        "citations": citations,
+        "meta": {**state.get("meta", {}), "retrieval_count": len(strong), "min_score": MIN_SCORE},
+    }
 
-
+    
 # -------------------------
 # Node 3: Tool execution (MCP)
 # -------------------------
@@ -136,26 +159,27 @@ async def rag_synthesize_node(state: QAState) -> QAState:
     retrieved = state.get("retrieved", [])
 
     if not retrieved:
-        # fallback: no context found
-        answer, meta = await llm.chat_with_tools(q, request_id=request_id)
-        return {"answer": answer, "meta": {**state.get("meta", {}), **meta}}
+        return {
+            "answer": "I don't know based on the provided documents.",
+            "meta": {**state.get("meta", {}), "no_context_found": True},
+        }
 
     context = "\n\n".join(
         [f"[{r['rank']}] ({r['source']}) {r['text']}" for r in retrieved]
     )
 
     prompt = f"""
-You are a helpful assistant. Answer the user using ONLY the context below.
-If the answer is not present in the context, say: "I don't know based on the provided documents."
+        You MUST answer using ONLY the provided context.
+        - If the answer is not explicitly present in the context, reply exactly:
+        "I don't know based on the provided documents."
+        - When you use a piece of context, cite it as [1], [2] etc based on the context rank.
 
-Context:
-{context}
+        Context:
+        {context}
 
-User question:
-{q}
-
-Return a concise answer. Also mention citations like [1], [2] referencing the context ranks.
-""".strip()
+        Question:
+        {q}
+        """.strip()
 
     answer, meta = await llm.chat_with_tools(prompt, request_id=request_id)
     return {"answer": answer, "meta": {**state.get("meta", {}), **meta}}
@@ -173,6 +197,12 @@ async def hybrid_node(state: QAState) -> QAState:
     request_id = state["request_id"]
     q = state["user_message"]
     retrieved = state.get("retrieved", [])
+
+    if not retrieved:
+        return {
+            "answer": "I don't know based on the provided documents.",
+            "meta": {**state.get("meta", {}), "no_context_found": True},
+        }
 
     context = "\n\n".join(
         [f"[{r['rank']}] ({r['source']}) {r['text']}" for r in retrieved]

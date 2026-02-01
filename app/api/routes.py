@@ -12,7 +12,7 @@ from app.workflows.qa_graph import run_qa_workflow
 router = APIRouter()
 tool_client = ToolClient()
 log = structlog.get_logger()
-limiter = RateLimiter(max_requests=2, window_seconds=60)
+limiter = RateLimiter(max_requests=10, window_seconds=60)
 
 llm = None
 try:
@@ -75,7 +75,7 @@ async def chat(req: ChatRequest, request: Request):
         meta={
             **result.get("meta", {}),
             "citations": result.get("citations", []),
-        },
+            },
     )
 
 

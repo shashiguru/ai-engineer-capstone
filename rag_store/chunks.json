@@ -10,5 +10,59 @@
     "doc_id": "product.md",
     "source": "docs\\product.md",
     "text": "Product: This system answers questions using internal documents with citations."
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk0",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "Details \n   Singapore \n  +65 88391012 \nshashikumar8782@gmail.com \nN A T I O N A L I T Y \nIndian \nD A T E  O F  B I R T H \n15/07/1994 \nLinks \nLinkedIn \nGitHub \nSkills \nBackend & Architecture \n.Net Core 6.0, Entity Framework, \nNode JS, GRPC \nMicroservices, REST APIs \nFrontend \n.Net Core MVC, Angular, React (18), \nNext.js, PrimeNG, Angular Material, \nChart.js, AM Charts, MUI, AntD, \nRedux \nCloud & DevOps \nAzure PAAS Services, Docker, \nKubernetes, Azure DevOps CI/CD, \nBitBucket, Octopus, ARM Templates \nData & Messaging \nMSSQL, MongoDB, PostgreSQL, \nApache Kafka, Azure Service Bus, KQL \nAI & Automation \nGenAI (OpenAI) \nAgentic frameworks: AutoGen, \nCrewAI, LangGraph, MCP  \nUnit Test:  \nXUnit, FakeItEasy, Jest, React Testing \nLibrary, Jasmine, Karma \nEngineering Practices \nAgile / Scrum, SAFe Agile \n  \n \n \nShashiguru  Keluth \nT E C H  L E A D  |  F U L L- S T A C K  &  C L O U D  P L A T F O R"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk1",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "rma \nEngineering Practices \nAgile / Scrum, SAFe Agile \n  \n \n \nShashiguru  Keluth \nT E C H  L E A D  |  F U L L- S T A C K  &  C L O U D  P L A T F O R M  E NG I N E E R  |  A P P L IE D  \nA I  S P E C I A L I S T \n Profile Summary \n Tech Lead and Full-Stack Engineer with 8+ years of experience designing and delivering cloud-\nnative, data -intensive platforms  across renewable energy, government, and healthcare  \ndomains. Currently leading development of enterprise-scale renewable energy analytics \nplatforms at Sembcorp, supporting Solar, Wind, Battery, and Water assets  across multiple \nglobal markets. \nStrong expertise across frontend, backend, microservices (GRPC), DevOps, and Azure PaaS , \nwith end-to-end ownership from architecture to production. Applied AI Specialist focused on \nintegrating GenAI and agentic workflows  into real -world systems to automate analytics, \ndecision suppor"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk2",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "roduction. Applied AI Specialist focused on \nintegrating GenAI and agentic workflows  into real -world systems to automate analytics, \ndecision support, and operational processes at scale. Proven leader with experience managing \nteams, stakeholders, and complex multi-market deliveries. \n Certifications \nYear Examination Candidate Id \n2020 AZ-900: Microsoft Azure Fundamentals H570-7367 \n2020 DP-900: Microsoft Azure Data Fundamentals H581-5705 \n2020 AI-900: Microsoft Azure AI Fundamentals H614-8420 \n Education \nYear Examination Institution & Board/University Percentage \n2016 B.E Chaitanya Bharati Institute of Technology (Osmania \nUniversity), Hyderabad \n74% \n2012 Diploma Govt Institute of Electronics (SBTET), Secunderabad 74% \n2009 Class X Ravi Teja High School (SSC), Marikal 79% \n Employment History \nTech Lead & Applied AI Specialist, Sembcorp Utilities Pte Ltd, Singapore \nA P R I L 202 4"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk3",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "vi Teja High School (SSC), Marikal 79% \n Employment History \nTech Lead & Applied AI Specialist, Sembcorp Utilities Pte Ltd, Singapore \nA P R I L 202 4  —  P R E S E N T \n● Lead development of an enterprise renewable analytics platform  supporting Solar, Wind, \nBattery, and Water assets across multiple countries. \n● Own architecture and technical direction, implementing microservices using GRPC, Node.js, \nand .NET, deployed on Azure Kubernetes Service. \n● Designed and delivered a self-service access control platform  with approval workflows, \nimproving governance, security, and operational efficiency. \n● Manage and mentor a cross -functional engineering team, ensuring on-time milestone \ndelivery and high code quality. \n● Act as primary technical interface for stakeholders across India, Singapore, Oman, Vietnam, \nIndonesia, Malaysia, and Philippines. \n● Implement agentic AI workflows  usin"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk4",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "ical interface for stakeholders across India, Singapore, Oman, Vietnam, \nIndonesia, Malaysia, and Philippines. \n● Implement agentic AI workflows  using AutoGen and MCP  to automate analytics and \noperational decision-making. \n● Oversee CI/CD pipelines, DevOps practices, and Azure PaaS services  to ensure platform \nscalability, reliability, and security. \n\n \nFull-Stack Developer, U3 Infotech Pte Ltd, Singapore \nClient: Sembcorp Industries Pte Ltd, Singapore \nJ U L Y 202 3  —  A P R I L 202 4  \n● Built real-time and historical analytical dashboards for renewable energy generation across Wind, Solar, Battery, and Water  \nportfolios. \n● Developed a Vendor Invoice Management System  automating invoice entry, validation, and approvals, reducing processing time \nand errors by ~30%. \n● Designed and implemented a Blockchain Explorer to generate, track, and monitor energy tokens, improving transpa"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk5",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "rocessing time \nand errors by ~30%. \n● Designed and implemented a Blockchain Explorer to generate, track, and monitor energy tokens, improving transparency and \ntraceability. \n● Implemented scalable APIs for analytics using .NET Core, Node.js, and KQL. \n● Created reusable frontend component libraries, accelerating feature development and consistency. \n● Integrated authentication and authorization using Azure PaaS services. \n● Built and maintained CI/CD pipelines using Azure DevOps and Docker. \nSenior Software Engineer, Innovatiq Technologies Pte Ltd, Singapore \nClient: IRAS, Singapore \nA P R I L  2 0 2 2  —  J U L Y  2 0 2 3 \n● Designed and implemented event-driven microservices and Kafka handlers for high-volume government systems. \n● Delivered complex business modules with zero production defects under tight timelines. \n● Authored technical design specifications and collaborated closel"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk6",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "vered complex business modules with zero production defects under tight timelines. \n● Authored technical design specifications and collaborated closely with business users. \n● Mentored interns and junior engineers across multiple technology stacks. \n● Achieved ~95% unit test coverage through automated testing. \n● Integrated Azure APIM, Application Insights, Key Vault, Azure AD, and AKS. \n● Implemented CI/CD pipelines and release workflows using Azure DevOps. \nSenior Software Engineer, Heron Health India Pvt Ltd (CALYX AI), Hyderabad \nF E B R U A R Y  2 0 2 0  —  M A R C H  2 0 2 2 \n● Built two client applications and one backend API from scratch and delivered within committed timelines. \n● Onboarded 23+ APIs into Azure API Management, implementing security, throttling, and monitoring policies. \n● Developed and released the Parexel Developer Portal without production issues. \n● Designed a"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk7",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "menting security, throttling, and monitoring policies. \n● Developed and released the Parexel Developer Portal without production issues. \n● Designed a frontend application framework using React, Next.js, Redux, and Material UI. \n● Implemented APIs using clean architecture and mediator patterns. \n● Automated infrastructure provisioning using ARM templates. \n● Built CI/CD pipelines using TeamCity and Octopus and produced HLD/LLD documentation. \n● Actively participated in SAFe PI planning and Scrum ceremonies.  \nSoftware Engineer, Accenture Solutions Pvt Ltd, Hyderabad \nJ A N U A R Y  2 0 1 7  —  F E B R U A R Y  2 0 2 0 \n● Developed enterprise applications using .NET Core, ASP.NET MVC, and Azure PaaS. \n● Built large-scale batch and console applications processing millions of records, hosted as Azure WebJobs. \n● Migrated legacy Windows services to microservices-based APIs using .NET Core an"
+  },
+  {
+    "chunk_id": "ShashiguruKeluthResume28.12.25.pdf::chunk8",
+    "doc_id": "ShashiguruKeluthResume28.12.25.pdf",
+    "source": "docs\\ShashiguruKeluthResume28.12.25.pdf",
+    "text": "plications processing millions of records, hosted as Azure WebJobs. \n● Migrated legacy Windows services to microservices-based APIs using .NET Core and Docker, deployed on AKS. \n● Implemented web applications using Angular, ASP.NET MVC, Entity Framework, and SQL Server. \n● Collaborated with client technical managers to resolve blockers, risks, and architectural decisions. \n● Actively participated in Agile and SAFe ceremonies, including PI planning. \nI hereby declare that the above information is true to the best of my knowledge and belief. \nDate:     \nPlace:     Singapore.                                                    Shashiguru Keluth"
   }
 ]
