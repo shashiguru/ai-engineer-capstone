@@ -3,7 +3,7 @@ from collections import defaultdict, deque
 
 # Simple in-memory limiter: N requests per window seconds, per key
 class RateLimiter:
-    def __init__(self, max_requests: int = 10, window_seconds: int = 60):
+    def __init__(self, max_requests: int = 2, window_seconds: int = 60):
         self.max_requests = max_requests
         self.window_seconds = window_seconds
         self.events = defaultdict(deque)

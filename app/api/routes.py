@@ -7,6 +7,7 @@ from app.core.tool_client import ToolClient
 import structlog
 from app.core.guardrails import is_unsafe_user_input
 from app.core.rate_limit import RateLimiter
+from app.workflows.qa_graph import run_qa_workflow
 
 router = APIRouter()
 tool_client = ToolClient()
@@ -31,7 +32,7 @@ class ChatResponse(BaseModel):
 async def health() -> dict:
     return {"status": "ok"}
 
-@router.post("/chat", response_model=ChatResponse)
+"""@router.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest, request: Request):
     request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
 
@@ -59,6 +60,22 @@ async def chat(req: ChatRequest, request: Request):
 
     except Exception as e:
         log.error("chat_failed", request_id=request_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"LLM call failed: {e}")
+        raise HTTPException(status_code=500, detail=f"LLM call failed: {e}")"""
+
+@router.post("/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest, request: Request):
+    request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
+    client_key = request.client.host if request.client else "unknown"
+
+    result = await run_qa_workflow(req.message, request_id=request_id, client_key=client_key)
+
+    return ChatResponse(
+        reply=result.get("answer", ""),
+        request_id=request_id,
+        meta={
+            **result.get("meta", {}),
+            "citations": result.get("citations", []),
+        },
+    )
 
 
