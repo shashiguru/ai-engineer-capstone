@@ -11,4 +11,8 @@ CHUNK_SIZE = 900
 CHUNK_OVERLAP = 150
 
 TOP_K = 6
-MIN_SCORE = 0.25  # increase to be stricter (0.30-0.40), decrease for more recall (0.15-0.25)
+MIN_SCORE = 0.25 
+
+RETRIEVE_K = 15
+RERANK_TOP_N = 5
+MIN_SCORE = 0.25 # increase to be stricter (0.30-0.40), decrease for more recall (0.15-0.25)

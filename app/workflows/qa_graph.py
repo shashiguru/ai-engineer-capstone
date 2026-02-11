@@ -10,7 +10,9 @@ from app.core.guardrails import is_unsafe_user_input
 from app.core.rate_limit import RateLimiter
 from app.core.llm_client import LLMClient
 from app.core.tool_client import ToolClient
-from app.core.config import TOP_K, MIN_SCORE
+from app.core.config import TOP_K, MIN_SCORE, RETRIEVE_K, RERANK_TOP_N, MIN_SCORE
+from app.rag.reranker import rerank
+from pathlib import Path
 
 log = structlog.get_logger()
 
@@ -103,24 +105,41 @@ async def route_node(state: QAState) -> QAState:
 # -------------------------
 async def rag_node(state: QAState) -> QAState:
     q = state["user_message"]
+    request_id = state["request_id"]
 
-    # get candidates
-    results = retrieve(q, k=TOP_K)
+    # 1) Retrieve more candidates
+    candidates = retrieve(q, k=RETRIEVE_K)
 
-    # ✅ NEW: filter low quality hits
-    strong = [r for r in results if r["score"] >= MIN_SCORE]
+    # 2) Keep only candidates above MIN_SCORE
+    strong = [r for r in candidates if r["score"] >= MIN_SCORE]
 
-    citations = [
-        {"rank": r["rank"], "source": r["source"], "chunk_id": r["chunk_id"], "score": r["score"]}
-        for r in strong
-    ]
+    if not strong:
+        return {"retrieved": [], "citations": [], "meta": {**state.get("meta", {}), "no_context_found": True}}
+
+    # 3) Rerank down to best N
+    top = await rerank(q, strong, top_n=RERANK_TOP_N, request_id=f"{request_id}:rerank")
+
+    # 4) Clean citations (just filename, not full path)
+    citations = []
+    for i, r in enumerate(top, start=1):
+        citations.append({
+            "rank": i,
+            "source": Path(r["source"]).name,
+            "chunk_id": r["chunk_id"],
+            "score": r["score"],
+        })
 
     return {
-        "retrieved": strong,
+        "retrieved": top,
         "citations": citations,
-        "meta": {**state.get("meta", {}), "retrieval_count": len(strong), "min_score": MIN_SCORE},
+        "meta": {
+            **state.get("meta", {}),
+            "retrieval_k": RETRIEVE_K,
+            "rerank_top_n": RERANK_TOP_N,
+            "min_score": MIN_SCORE,
+            "retrieval_count": len(top),
+        },
     }
-
     
 # -------------------------
 # Node 3: Tool execution (MCP)
@@ -164,9 +183,11 @@ async def rag_synthesize_node(state: QAState) -> QAState:
             "meta": {**state.get("meta", {}), "no_context_found": True},
         }
 
-    context = "\n\n".join(
-        [f"[{r['rank']}] ({r['source']}) {r['text']}" for r in retrieved]
-    )
+    context_parts = []
+    for i, r in enumerate(retrieved, start=1):
+        src = Path(r["source"]).name
+        context_parts.append(f"[{i}] ({src}) {r['text']}")
+    context = "\n\n".join(context_parts)
 
     prompt = f"""
         You MUST answer using ONLY the provided context.
