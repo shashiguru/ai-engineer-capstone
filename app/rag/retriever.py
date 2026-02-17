@@ -17,9 +17,20 @@ def embed_query(query: str) -> np.ndarray:
     return vec
 
 
+def _resolve_store_dir(store_dir: str) -> Path:
+    p = Path(store_dir)
+    if p.is_absolute():
+        return p
+
+    # Keep default store location stable regardless of current working directory.
+    project_root = Path(__file__).resolve().parents[2]
+    return project_root / p
+
+
 def load_store(store_dir: str = "rag_store") -> Tuple[faiss.Index, List[Dict]]:
-    index = faiss.read_index(str(Path(store_dir) / "index.faiss"))
-    chunks = json.loads(Path(store_dir, "chunks.json").read_text(encoding="utf-8"))
+    resolved_dir = _resolve_store_dir(store_dir)
+    index = faiss.read_index(str(resolved_dir / "index.faiss"))
+    chunks = json.loads((resolved_dir / "chunks.json").read_text(encoding="utf-8"))
     return index, chunks
 
 
