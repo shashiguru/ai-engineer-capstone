@@ -298,4 +298,11 @@ async def run_qa_workflow(user_message: str, request_id: str, client_key: str) -
     result: QAState = await workflow.ainvoke(
         {"user_message": user_message, "request_id": request_id, "client_key": client_key}
     )
+    log.info(
+    "qa_complete",
+    request_id=request_id,
+    route=result.get("route"),
+    latency=result.get("meta", {}).get("latency_ms"),
+    cost=result.get("meta", {}).get("cost_estimate_usd"),
+    )
     return result

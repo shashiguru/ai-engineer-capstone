@@ -11,6 +11,10 @@ from app.core.tool_schemas import AddArgs, MultiplyArgs
 import hashlib
 from app.core.tool_log_repo import insert_tool_log
 
+import time
+from app.core.costs import estimate_cost
+from app.core.budget import add_cost
+
 ALLOWED_TOOLS = {"add","multiply"}
 MAX_TOOL_CALLS_PER_REQUEST = 5
 
@@ -92,10 +96,15 @@ class LLMClient:
             # If no tool calls, we're done
             if not msg.tool_calls:
                 latency_ms = (time.perf_counter() - overall_start) * 1000.0
+                usage = resp.usage
+                cost = estimate_cost(OPENAI_MODEL, usage.prompt_tokens, usage.completion_tokens)
+                total_spent = add_cost(cost)
                 meta = {
                     "model": OPENAI_MODEL,
                     "latency_ms": round(latency_ms, 2),
+                    "cost_estimate_usd": cost,
                     "tools_used": tools_used,
+                    "total_session_cost": total_spent,
                 }
                 if resp.usage:
                     meta.update(
